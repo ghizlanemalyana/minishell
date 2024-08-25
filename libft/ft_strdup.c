@@ -1,38 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   ft_strdup.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gmalyana <gmalyana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/07 11:37:40 by gmalyana          #+#    #+#             */
-/*   Updated: 2024/08/24 19:17:25 by gmalyana         ###   ########.fr       */
+/*   Created: 2023/11/13 21:07:02 by gmalyana          #+#    #+#             */
+/*   Updated: 2023/12/15 13:45:40 by gmalyana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# ifndef MINISHELL_H
-# define MINISHELL_H
+#include "libft.h"
 
-# include "libft/libft.h"
-# include <string.h>
-# include <readline/readline.h>
-
-
-// typedef struct s_token
-// {
-// 	char			*content;
-// 	int				type;
-// 	struct s_token	*next;
-// 	struct s_token	*prev;
-// }	t_token;
-
-typedef struct s_shell
+char	*ft_strdup(const char *s1)
 {
-	char			*line;
-	t_list			*tokens;
-}	t_shell;
+	char		*dup;
+	size_t		i;
+	size_t		len;
 
-t_type		get_type(char *word);
-int			get_len(char *word, t_type type);
-
-# endif
+	len = ft_strlen(s1);
+	dup = malloc((len + 1) * sizeof(char));
+	if (!dup)
+	{
+		return (NULL);
+	}
+	i = 0;
+	while (s1[i] != '\0')
+	{
+		dup[i] = s1[i];
+		i++;
+	}
+	dup[i] = '\0';
+	return (dup);
+}

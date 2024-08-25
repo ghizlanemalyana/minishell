@@ -1,0 +1,6 @@
+*.out
+*.o
+private
+*.tldr
+minishell
+a.out.dSYM/

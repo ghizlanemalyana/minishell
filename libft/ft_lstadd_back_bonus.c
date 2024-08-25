@@ -1,38 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   ft_lstadd_back_bonus.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gmalyana <gmalyana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/07 11:37:40 by gmalyana          #+#    #+#             */
-/*   Updated: 2024/08/24 19:17:25 by gmalyana         ###   ########.fr       */
+/*   Created: 2023/11/24 16:01:08 by gmalyana          #+#    #+#             */
+/*   Updated: 2024/08/23 19:46:17 by gmalyana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# ifndef MINISHELL_H
-# define MINISHELL_H
+#include "libft.h"
 
-# include "libft/libft.h"
-# include <string.h>
-# include <readline/readline.h>
-
-
-// typedef struct s_token
-// {
-// 	char			*content;
-// 	int				type;
-// 	struct s_token	*next;
-// 	struct s_token	*prev;
-// }	t_token;
-
-typedef struct s_shell
+void	ft_lstadd_back(t_list **lst, t_list *new)
 {
-	char			*line;
-	t_list			*tokens;
-}	t_shell;
+	t_list	*current;
 
-t_type		get_type(char *word);
-int			get_len(char *word, t_type type);
-
-# endif
+	if (new == NULL || lst == NULL)
+		return ;
+	if (*lst == NULL)
+	{
+		*lst = new;
+		return ;
+	}
+	current = *lst;
+	while (current->next != NULL)
+	{
+		current = current->next;
+	}
+	current->next = new;
+}

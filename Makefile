@@ -1,5 +1,5 @@
 CFLAGS = -Wall -Wextra -Werror
-SOURCES = $(shell find . -type f -name "*.c")
+SOURCES = $(shell find src/ -type f -name "*.c")
 OBJS = $(SOURCES:.c=.o)
 LIB_DIR = libft/
 LIBFT = $(LIB_DIR)libft.a
@@ -8,10 +8,10 @@ NAME = minishell
 all: $(NAME)
 
 $(NAME): $(OBJS) $(LIBFT)
-	cc $(OBJS) $(LIBFT) -lreadline -o $(NAME)
+	cc -g -fsanitize=address $(OBJS) $(LIBFT) -lreadline -o $(NAME)
 
 %.o : %.c minishell.h
-	cc $(flags) -c $< -o $@
+	cc -g -fsanitize=address $(flags) -c $< -o $@
 
 $(LIBFT) :
 	make -C $(LIB_DIR)

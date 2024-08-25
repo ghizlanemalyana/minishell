@@ -1,38 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   ft_strrchr.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gmalyana <gmalyana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/07 11:37:40 by gmalyana          #+#    #+#             */
-/*   Updated: 2024/08/24 19:17:25 by gmalyana         ###   ########.fr       */
+/*   Created: 2023/11/03 18:10:26 by gmalyana          #+#    #+#             */
+/*   Updated: 2023/12/14 23:20:52 by gmalyana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# ifndef MINISHELL_H
-# define MINISHELL_H
+#include "libft.h"
 
-# include "libft/libft.h"
-# include <string.h>
-# include <readline/readline.h>
-
-
-// typedef struct s_token
-// {
-// 	char			*content;
-// 	int				type;
-// 	struct s_token	*next;
-// 	struct s_token	*prev;
-// }	t_token;
-
-typedef struct s_shell
+char	*ft_strrchr(const char *s, int c)
 {
-	char			*line;
-	t_list			*tokens;
-}	t_shell;
+	char	*m;
+	int		i;
+	int		len;
 
-t_type		get_type(char *word);
-int			get_len(char *word, t_type type);
-
-# endif
+	m = (char *)s;
+	len = ft_strlen(s);
+	i = len - 1;
+	while (i >= 0)
+	{
+		if (m[i] == (char)c)
+		{
+			return (&m[i]);
+		}
+		i--;
+	}
+	if ((char)c == '\0')
+	{
+		return (m + len);
+	}
+	return (NULL);
+}

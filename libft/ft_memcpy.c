@@ -1,38 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   ft_memcpy.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gmalyana <gmalyana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/07 11:37:40 by gmalyana          #+#    #+#             */
-/*   Updated: 2024/08/24 19:17:25 by gmalyana         ###   ########.fr       */
+/*   Created: 2023/11/11 20:54:49 by gmalyana          #+#    #+#             */
+/*   Updated: 2023/12/15 20:51:55 by gmalyana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# ifndef MINISHELL_H
-# define MINISHELL_H
+#include "libft.h"
 
-# include "libft/libft.h"
-# include <string.h>
-# include <readline/readline.h>
-
-
-// typedef struct s_token
-// {
-// 	char			*content;
-// 	int				type;
-// 	struct s_token	*next;
-// 	struct s_token	*prev;
-// }	t_token;
-
-typedef struct s_shell
+void	*ft_memcpy(void *dst, const void *src, size_t n)
 {
-	char			*line;
-	t_list			*tokens;
-}	t_shell;
+	size_t		i;
+	char		*d;
+	const char	*s;
 
-t_type		get_type(char *word);
-int			get_len(char *word, t_type type);
-
-# endif
+	if (dst == NULL && src == NULL)
+	{
+		return (NULL);
+	}
+	if (dst == src)
+		return (dst);
+	d = (char *)dst;
+	s = (const char *)src;
+	i = 0;
+	while (i < n)
+	{
+		d[i] = s[i];
+		i++;
+	}
+	return (d);
+}

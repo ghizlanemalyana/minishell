@@ -1,38 +1,41 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   ft_memmove.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gmalyana <gmalyana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/07 11:37:40 by gmalyana          #+#    #+#             */
-/*   Updated: 2024/08/24 19:17:25 by gmalyana         ###   ########.fr       */
+/*   Created: 2023/11/11 21:36:43 by gmalyana          #+#    #+#             */
+/*   Updated: 2023/12/14 23:10:48 by gmalyana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# ifndef MINISHELL_H
-# define MINISHELL_H
+#include "libft.h"
 
-# include "libft/libft.h"
-# include <string.h>
-# include <readline/readline.h>
-
-
-// typedef struct s_token
-// {
-// 	char			*content;
-// 	int				type;
-// 	struct s_token	*next;
-// 	struct s_token	*prev;
-// }	t_token;
-
-typedef struct s_shell
+void	*ft_memmove(void *dst, const void *src, size_t len)
 {
-	char			*line;
-	t_list			*tokens;
-}	t_shell;
+	char	*d;
+	char	*s;
 
-t_type		get_type(char *word);
-int			get_len(char *word, t_type type);
-
-# endif
+	d = (char *)dst;
+	s = (char *)src;
+	if (dst == NULL && src == NULL)
+		return (NULL);
+	if (s < d && d < s + len)
+	{
+		s = s + len - 1;
+		d = d + len - 1;
+		while (len > 0)
+		{
+			*d = *s;
+			d--;
+			s--;
+			len--;
+		}
+	}
+	else
+	{
+		ft_memcpy(dst, src, len);
+	}
+	return (dst);
+}

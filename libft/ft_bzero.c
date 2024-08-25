@@ -1,38 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   ft_bzero.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gmalyana <gmalyana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/07 11:37:40 by gmalyana          #+#    #+#             */
-/*   Updated: 2024/08/24 19:17:25 by gmalyana         ###   ########.fr       */
+/*   Created: 2023/11/03 10:26:45 by gmalyana          #+#    #+#             */
+/*   Updated: 2023/12/12 14:22:02 by gmalyana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# ifndef MINISHELL_H
-# define MINISHELL_H
+#include "libft.h"
 
-# include "libft/libft.h"
-# include <string.h>
-# include <readline/readline.h>
-
-
-// typedef struct s_token
-// {
-// 	char			*content;
-// 	int				type;
-// 	struct s_token	*next;
-// 	struct s_token	*prev;
-// }	t_token;
-
-typedef struct s_shell
+void	ft_bzero(void *s, size_t n)
 {
-	char			*line;
-	t_list			*tokens;
-}	t_shell;
+	unsigned char	*mem;
+	unsigned char	c;
+	size_t			i;
 
-t_type		get_type(char *word);
-int			get_len(char *word, t_type type);
-
-# endif
+	mem = s;
+	c = '\0';
+	i = 0;
+	while (i < n)
+	{
+		mem[i] = c;
+		i++;
+	}
+}
