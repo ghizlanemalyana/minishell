@@ -6,7 +6,7 @@
 /*   By: gmalyana <gmalyana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/09 17:34:36 by gmalyana          #+#    #+#             */
-/*   Updated: 2024/08/24 18:39:57 by gmalyana         ###   ########.fr       */
+/*   Updated: 2024/08/29 20:54:52 by gmalyana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,33 +18,11 @@
 # include <stddef.h>
 # include <stdint.h>
 
-/*
-PIPE
-ARG
-REDIR_OUT
-REDIR_IN
-APPEND
-HEREDOC
-NONE
-*/
-
-typedef enum e_type
-{
-	NONE,
-	PIPE,
-	ARG,
-	REDIR_OUT,
-	REDIR_IN,
-	APPEND,
-	HEREDOC
-}	t_type;
-
 typedef struct s_list
 {
 	void			*content;
-	t_type			type;
-	int				len;
 	struct s_list	*next;
+	struct s_list	*prev;
 }	t_list;
 
 void	ft_bzero(void *s, size_t n);
@@ -84,6 +62,8 @@ size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize);
 t_list	*ft_lstnew(void *content);
 int		ft_lstsize(t_list *lst);
 void	ft_lstadd_front(t_list **lst, t_list *new);
+void	ft_lstdelone(t_list *lst, void (*del)(void *));
+void	ft_lstclear(t_list **lst, void (*del)(void *));
 void	ft_lstadd_back(t_list **lst, t_list *new);
 t_list	*ft_lstlast(t_list *lst);
 

@@ -1,6 +1,8 @@
 *.out
 *.o
 private
+.DS_Store
 *.tldr
 minishell
 a.out.dSYM/
+.DS_Store

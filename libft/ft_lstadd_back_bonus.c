@@ -6,7 +6,7 @@
 /*   By: gmalyana <gmalyana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 16:01:08 by gmalyana          #+#    #+#             */
-/*   Updated: 2024/08/23 19:46:17 by gmalyana         ###   ########.fr       */
+/*   Updated: 2024/08/29 20:39:38 by gmalyana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	ft_lstadd_back(t_list **lst, t_list *new)
 {
-	t_list	*current;
+	t_list	*last;
 
 	if (new == NULL || lst == NULL)
 		return ;
@@ -23,10 +23,7 @@ void	ft_lstadd_back(t_list **lst, t_list *new)
 		*lst = new;
 		return ;
 	}
-	current = *lst;
-	while (current->next != NULL)
-	{
-		current = current->next;
-	}
-	current->next = new;
+	last = ft_lstlast(*lst);
+	last->next = new;
+	new->prev = last;
 }
