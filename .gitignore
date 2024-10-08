@@ -1,8 +1,14 @@
-*.out
-*.o
+# *
+# !libft
+# !src/builtins
+# !Makefile
+# !*.h
+# !.gitignore
 private
+.todo
+.vscode
 .DS_Store
-*.tldr
+*.o
 minishell
-a.out.dSYM/
-.DS_Store
+minish_db
+minish_db.dSYM

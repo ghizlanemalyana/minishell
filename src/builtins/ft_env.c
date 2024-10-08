@@ -1,42 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strjoin.c                                       :+:      :+:    :+:   */
+/*   ft_env.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gmalyana <gmalyana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/15 16:49:10 by gmalyana          #+#    #+#             */
-/*   Updated: 2024/10/06 13:23:18 by gmalyana         ###   ########.fr       */
+/*   Created: 2024/09/01 16:06:05 by gmalyana          #+#    #+#             */
+/*   Updated: 2024/09/01 21:36:23 by gmalyana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+# include "../../minishell.h"
 
-char	*ft_strjoin(char const *s1, char const *s2)
+void	ft_env(t_list *env)
 {
-	char	*ptr;
-	size_t	i;
-	size_t	j;
+	t_list	*tmp;
 
-	i = 0;
-	j = 0;
-	if (!s1 || !s2)
-		return (NULL);
-	ptr = (char *)malloc(ft_strlen(s1) + ft_strlen(s2) + 1);
-	if (ptr != NULL)
+	tmp = env;
+	while (tmp)
 	{
-		while (s1[i] != '\0')
-		{
-			ptr[i] = s1[i];
-			i++;
-		}
-		while (s2[j] != '\0')
-		{
-			ptr[i + j] = s2[j];
-			j++;
-		}
-		ptr[i + j] = '\0';
-		return (ptr);
+		if (((t_env *)tmp->content)->value)
+			printf("%s=%s\n", ((t_env *)tmp->content)->key, ((t_env *)tmp->content)->value);
+		tmp = tmp->next;
 	}
-	return (NULL);
 }
+ 
