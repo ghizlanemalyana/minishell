@@ -6,7 +6,7 @@
 /*   By: gmalyana <gmalyana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/23 17:21:18 by gmalyana          #+#    #+#             */
-/*   Updated: 2024/10/08 12:49:34 by gmalyana         ###   ########.fr       */
+/*   Updated: 2024/10/11 18:12:28 by gmalyana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@ void	init_signals(void)
 }
 /*
 */
+
+
 int main(int ac, char **av, char **envp)
 {
 	t_shell	sh;
