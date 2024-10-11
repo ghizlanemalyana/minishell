@@ -6,20 +6,41 @@
 /*   By: gmalyana <gmalyana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/06 19:05:12 by gmalyana          #+#    #+#             */
-/*   Updated: 2024/10/08 18:36:43 by gmalyana         ###   ########.fr       */
+/*   Updated: 2024/10/11 19:43:43 by gmalyana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-int	init_redirs(t_cmd *redirs)
+int	init_redir(t_cmd *cmd, t_list *token)
 {
-	t_list *redir;
-	
-	redirs = ft_lstnew(redir);
+	t_list	*new;
+	t_redir	*redir;
+
+	redir = ft_calloc(sizeof(t_redir), 1);
+	if (redir == NULL)
+		return (FAILURE);
+	redir->type = ((t_token *)token->content)->type;
+	if (((t_token *)token->next->content)->content != NULL)
+	{
+		redir->filename = ft_strdup(((t_token *)token->next->content)->content);
+		if (redir->filename == NULL)
+		{
+			free(redir);
+			return (FAILURE);
+		}
+	}
+	new = ft_lstnew(redir);
+	if (new == NULL)
+	{
+		free(redir);
+		return(FAILURE);
+	}
+	ft_lstadd_back(&cmd, new);
+	return (SUCCESS);
 }
 
-int	set_argv(t_list *tokens, t_cmd *cmd)
+int	set_cmd(t_list *tokens, t_cmd *cmd)
 {
 	t_token	*token;
 	int		i;
@@ -32,7 +53,10 @@ int	set_argv(t_list *tokens, t_cmd *cmd)
 	{
 		token = tokens->content;
 		if (isredir(token))
+		{
+			init_redir(cmd, tokens);
 			tokens = tokens->next;
+		}
 		else if (token->type == ARG)
 		{
 			cmd->argv[i] = ft_strdup(token->content);
@@ -96,18 +120,16 @@ int init_cmd(t_shell *sh)
 		if (cmd == NULL)
 			return (FAILURE);
 		cmd->argc = count_argc(tokens);
-		if (set_argv(tokens, cmd) == FAILURE)
-		{
-			destory_cmd(cmd);
-			return (FAILURE);
-		}
+		if (set_cmd(tokens, cmd) == FAILURE)
+			return (destory_cmd(cmd), FAILURE);
 		node = ft_lstnew(cmd);
+		if (node == NULL)
+			return (destory_cmd(cmd), FAILURE);
 		ft_lstadd_back(&sh->cmds, node);
 		while (tokens != NULL && ((t_token *)tokens->content)->type != PIPE)
 			tokens = tokens->next;
 		if (tokens != NULL)
 			tokens = tokens->next;
 	}
-	display_cmds(sh->cmds);
 	return (SUCCESS);
 }
