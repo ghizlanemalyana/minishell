@@ -1,32 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_unset.c                                         :+:      :+:    :+:   */
+/*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gmalyana <gmalyana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/02 20:16:18 by gmalyana          #+#    #+#             */
-/*   Updated: 2024/11/03 00:21:29 by gmalyana         ###   ########.fr       */
+/*   Created: 2024/11/03 18:42:38 by gmalyana          #+#    #+#             */
+/*   Updated: 2024/11/09 19:05:31 by gmalyana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-int	ft_unset(t_shell *shell, char **av)
+void	invalid_identifier(char *func, char *identifier)
 {
-	int	status;
+	ft_putstr_fd("minishell: ", 2);
+	ft_putstr_fd(func, 2);
+	ft_putstr_fd(": `", 2);
+	ft_putstr_fd(identifier, 2);
+	ft_putstr_fd("': not a valid identifier\n", 2);
+}
 
-	status = SUCCESS;
-	while (*av)
+bool	is_key_valid(char *key)
+{
+	if (ft_isalpha(*key) == false && *key != '_')
+		return (false);
+	while (*key)
 	{
-		if (is_key_valid(*av))
-			unset_env(&shell->env, *av);
-		else
-		{
-			status = FAILURE;
-			invalid_identifier("unset", *av);
-		}
-		av++;
+		if (ft_isalnum(*key) == false && *key != '_')
+			return (false);
+		key++;
 	}
-	return (status);
+	return (true);
 }

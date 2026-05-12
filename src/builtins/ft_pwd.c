@@ -6,21 +6,25 @@
 /*   By: gmalyana <gmalyana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 22:15:56 by gmalyana          #+#    #+#             */
-/*   Updated: 2024/09/25 17:53:41 by gmalyana         ###   ########.fr       */
+/*   Updated: 2024/11/14 04:42:16 by gmalyana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "../../minishell.h"
+#include "../../minishell.h"
 
-int	ft_pwd()
+int	ft_pwd(t_shell *sh)
 {
-	char *str = getcwd(NULL, 0);
-	if (str == NULL)
+	char	*pwd;
+
+	pwd = getcwd(NULL, 0);
+	if (pwd == NULL)
 	{
-		perror("minishell : ");
-		return (1);
+		pwd = get_env(sh->hidden_env, "PWD");
+		if (pwd == NULL)
+			return (perror("pwd"), FAILURE);
+		pwd = ft_strdup(pwd);
 	}
-	printf("%s\n", str);
-	free(str);
-	return (0);
+	printf("%s\n", pwd);
+	free(pwd);
+	return (SUCCESS);
 }

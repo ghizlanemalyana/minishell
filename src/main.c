@@ -6,44 +6,39 @@
 /*   By: gmalyana <gmalyana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/23 17:21:18 by gmalyana          #+#    #+#             */
-/*   Updated: 2024/10/08 12:49:34 by gmalyana         ###   ########.fr       */
+/*   Updated: 2024/11/14 03:50:41 by gmalyana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void	init_signals(void)
-{
-	signal(SIGINT, sigint_handler);
-}
-/*
-*/
-int main(int ac, char **av, char **envp)
-{
-	t_shell	sh;
+int	g_received_signals = 0;
 
-	if (ac != 1)
-		return (printf("Usage: ./minishell\n"), FAILURE);
+int	main(int ac, char **av, char **envp)
+{
+	t_shell			sh;
+	struct termios	term;
+	int				status;
+
+	(void)av;
+	if (ac != 1 || !isatty(0))
+		return (ft_putstr_fd("Usage: ./minishell\n", 2), FAILURE);
 	ft_memset(&sh, 0, sizeof(t_shell));
-	if (init_env(&sh.env, envp) == FAILURE)
-		return (FAILURE);
+	if (ft_export(&sh, envp) == FAILURE
+		|| init_hidden_env(&sh) == FAILURE)
+		return (ft_lstclear(&sh.env, free_env), FAILURE);
+	tcgetattr(STDIN_FILENO, &term);
+	set_signals_handlers();
 	while (1)
 	{
-		parse(&sh);
-		init_cmd(&sh);
-		ft_lstclear(&sh.tokens, free);
-		//exec(&sh);
+		status = parse(&sh);
+		if (status != SUCCESS)
+			sh.exit_status = status;
+		if (sh.cmds == NULL)
+			continue ;
+		exec(&sh);
+		ft_lstclear(&sh.cmds, free_cmd);
+		tcsetattr(STDIN_FILENO, TCSANOW, &term);
 	}
+	return (EXIT_SUCCESS);
 }
-// while (1)
-// {
-// 	kanbgheeek
-// 	kantsta 3lik
-// 	kanmout 3lik
-// 	kanbgheeek
-// 	kan3ch9ek
-// 	nti 7yati
-// 	nti chrikti
-// 	Kanmout 3lik
-// }
-

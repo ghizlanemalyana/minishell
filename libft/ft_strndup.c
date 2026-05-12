@@ -1,32 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_unset.c                                         :+:      :+:    :+:   */
+/*   ft_strndup.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gmalyana <gmalyana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/02 20:16:18 by gmalyana          #+#    #+#             */
-/*   Updated: 2024/11/03 00:21:29 by gmalyana         ###   ########.fr       */
+/*   Created: 2024/10/13 16:36:10 by gmalyana          #+#    #+#             */
+/*   Updated: 2024/10/13 16:38:07 by gmalyana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../minishell.h"
+#include "libft.h"
 
-int	ft_unset(t_shell *shell, char **av)
+char	*ft_strndup(const char *s1, size_t n)
 {
-	int	status;
-
-	status = SUCCESS;
-	while (*av)
-	{
-		if (is_key_valid(*av))
-			unset_env(&shell->env, *av);
-		else
-		{
-			status = FAILURE;
-			invalid_identifier("unset", *av);
-		}
-		av++;
-	}
-	return (status);
+	return (ft_substr(s1, 0, n));
 }

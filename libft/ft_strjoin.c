@@ -6,7 +6,7 @@
 /*   By: gmalyana <gmalyana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 16:49:10 by gmalyana          #+#    #+#             */
-/*   Updated: 2024/10/06 13:23:18 by gmalyana         ###   ########.fr       */
+/*   Updated: 2024/10/13 16:26:47 by gmalyana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,8 @@ char	*ft_strjoin(char const *s1, char const *s2)
 
 	i = 0;
 	j = 0;
-	if (!s1 || !s2)
-		return (NULL);
+	if (!s1)
+		return (ft_strdup(s2));
 	ptr = (char *)malloc(ft_strlen(s1) + ft_strlen(s2) + 1);
 	if (ptr != NULL)
 	{

@@ -6,165 +6,92 @@
 /*   By: gmalyana <gmalyana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 21:06:06 by gmalyana          #+#    #+#             */
-/*   Updated: 2024/10/08 13:37:47 by gmalyana         ###   ########.fr       */
+/*   Updated: 2024/11/14 03:08:53 by gmalyana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-char	*ft_strjoin_f(char *s1, char *s2, int to_free)
+static int	check_syntax(t_shell *sh)
 {
-	char	*ptr;
+	t_list	*tokens;
+	t_token	*current;
+	t_token	*next;
 
-	ptr = ft_strjoin(s1, s2);
-	if (to_free == 1)
-		free(s1);
-	else if (to_free == 2)
-		free(s2);
-	else if (to_free == 3)
+	tokens = sh->tokens;
+	if (tokens == NULL)
+		return (SUCCESS);
+	if (((t_token *)tokens->content)->type == PIPE)
+		return (ERROR);
+	if (isoperator(ft_lstlast(tokens)->content))
+		return (ERROR);
+	while (tokens->next != NULL)
 	{
-		free(s1);
-		free(s2);
+		current = tokens->content;
+		next = tokens->next->content;
+		if (isredir(current) && isoperator(next))
+			return (ERROR);
+		if (current->type == PIPE && next->type == PIPE)
+			return (ERROR);
+		tokens = tokens->next;
 	}
-	return (ptr);
-}
-
-/*
-	Expansion
-	// int i = 0;
-	// if (token->content[i] != '$')
-	// 	i++;
-	// while (token->content[i] == ' ' || token->content[i] == '\t')
-	// 	i++;
-	// if (token->content[0] == '$')
-	// {
-	// 	value = get_env(sh->env, token->content + 1);
-	// 	if (value == NULL)
-	// 		token->content = ft_strdup("");
-	// 	else
-	// 		token->content = ft_strdup(value);
-	// }
-*/
-
-t_type	get_type(char *word)
-{
-	if (word[0] == '|')
-		return (PIPE);
-	else if (word[0] == '>' && word[1] == '>')
-		return (APPEND);
-	else if (word[0] == '<' && word[1] == '<')
-		return (HEREDOC);
-	else if (word[0] == '>')
-		return (REDIR_OUT);
-	else if (word[0] == '<')
-		return (REDIR_IN);
-	else if (word[0] == '"' && ft_strchr(word + 1, '"')
-		|| word[0] == '\'' && ft_strchr(word + 1, '\'')
-		|| (word[0] != '"' && word[0] != '\''))
-		return (ARG);
-	else
-		return (NONE);
-}
-
-//TODO to be updated later
-int	get_len(char *word, t_type type)
-{
-	int len = 0;
-
-	if (type == PIPE || type == REDIR_OUT || type == REDIR_IN)
-		return (1);
-	else if (type == APPEND || type == HEREDOC)
-		return (2);
-	else
-	{
-		if (word[0] == '"')
-			len = strcspn(word + 1, "\"");
-		else if (word[0] == '\'')
-			len = strcspn(word + 1, "'");
-		else if (word[0] == '$')
-		{
-			if (word[1] == '?')
-				return (2);
-			len = 1;
-			while (ft_isalnum(word[len]) || word[len] == '_')
-				len++;
-		}
-		else
-			len = strcspn(word, "|>< \t\"'$");
-		return (len);
-	}
-}
-
-int	add_token(t_shell *sh, t_token *new)
-{
-	t_list	*node;
-	char	*tmp;
-	t_token	*last;
-
-	if (sh->tokens != NULL)
-	{
-		last = ft_lstlast(sh->tokens)->content;
-		if (last->linked == true)
-		{
-			last->content = ft_strjoin_f(last->content, new->content, 1);
-			last->linked = new->linked;
-			free_token(new);
-			return (SUCCESS);
-		}
-	}
-	node = ft_lstnew(new);
-	ft_lstadd_back(&sh->tokens, node);
-	return(SUCCESS);
-}
-
-int create_token(t_shell *sh, char *line, int *i)
-{
-	t_token	*token;
-
-	token = ft_calloc(1, sizeof(t_token));
-	if (token == NULL)
-		return (FAILURE);
-	token->type = get_type(&line[*i]);
-	if (token->type == NONE)
-		return (free_token(token), ERROR);
-	token->len = get_len(&line[*i], token->type);
-	if (token->type == NONE)
-		return (FAILURE);
-	if (token->type == ARG)
-	{
-		token->quoted = (line[*i] == '"' || line[*i] == '\'');
-		if (ft_strchr("|><\t ", *(&line[*i] + token->len + (2 * (token->quoted)))) == NULL)
-			token->linked = true;
-		token->content = ft_substr(line, *i + token->quoted, token->len);
-		if (token->content == NULL)
-			return (free_token(token), FAILURE);
-	}
-	*i += token->len + 2 * token->quoted;
-	add_token(sh, token);
 	return (SUCCESS);
+}
+
+static void	update_exit_status(t_shell *sh)
+{
+	if (g_received_signals != sh->received_signals)
+	{
+		sh->exit_status = 1;
+		sh->received_signals = g_received_signals;
+	}
+}
+
+static int	init_tokens(t_shell *sh, char *line)
+{
+	int		i;
+	int		status;
+
+	i = 0;
+	status = SUCCESS;
+	while (line[i] && (line[i] == ' ' || line[i] == '\t'))
+		i++;
+	while (line[i])
+	{
+		status = create_token(sh, line, &i);
+		if (status != SUCCESS)
+			break ;
+		while (line[i] && (line[i] == ' ' || line[i] == '\t'))
+			i++;
+	}
+	return (status);
 }
 
 int	parse(t_shell *sh)
 {
 	char	*line;
-	int		i;
+	int		status;
 
-	i = 0;
+	status = SUCCESS;
 	line = readline(PROMPT);
+	update_exit_status(sh);
 	if (line == NULL)
-		exit(0);
-	while (line[i] && line[i] == ' ' || line[i] == '\t')
-		i++;
-	while (line[i] != '\0')
 	{
-		if (create_token(sh, line, &i) != SUCCESS)
-			exit(1);
-		while (line[i] && line[i] == ' ' || line[i] == '\t')
-			i++;
+		printf("\033[F\033[2Cexit\n");
+		my_exit(sh, sh->exit_status);
 	}
 	if (ft_strlen(line) > 0)
+	{
 		add_history(line);
-	//print_tokens(sh->tokens);
-	free(line);
-	return (SUCCESS);
+		status = init_tokens(sh, line);
+		if (status == SUCCESS)
+		{
+			status = check_syntax(sh);
+			if (status == SUCCESS)
+				status = init_cmd(sh);
+		}
+		if (status == ERROR)
+			ft_putstr_fd("minishell: syntax error\n", 2);
+	}
+	return (free(line), ft_lstclear(&sh->tokens, free_token), status);
 }

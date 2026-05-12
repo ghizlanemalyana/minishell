@@ -6,7 +6,7 @@
 /*   By: gmalyana <gmalyana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/25 17:06:07 by gmalyana          #+#    #+#             */
-/*   Updated: 2024/08/29 21:01:29 by gmalyana         ###   ########.fr       */
+/*   Updated: 2024/10/30 16:41:44 by gmalyana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,27 +14,25 @@
 
 void	ft_echo(char **argv)
 {
-	int i = 0;
-	if ((argv[0][i] == '-' && argv[0][i+1] == 'n' && (strlen(&argv[0][1]) == strspn(&argv[0][1], "n"))))
+	bool	n_flag;
+
+	n_flag = true;
+	while (*argv)
 	{
-		i = 1;
-		while (argv[i] != NULL)
-		{
-			printf("%s", argv[i]);
-			if (argv[i + 1] != NULL)
-				printf(" ");
-			i++;
-		}
+		if (ft_strncmp(*argv, "-n", 2) == 0
+			&& ft_strlen(*argv) - 1 == ft_strspn(&argv[0][1], "n"))
+			n_flag = false;
+		else
+			break ;
+		argv++;
 	}
-	else
+	while (*argv)
 	{
-		while (argv[i] != NULL)
-		{
-			printf("%s", argv[i]);
+		printf("%s", *argv);
+		if (*(argv + 1))
 			printf(" ");
-			if (argv[i + 1] == NULL)
-				printf("\n");
-			i++;
-		}
+		argv++;
 	}
+	if (n_flag)
+		printf("\n");
 }

@@ -1,32 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_unset.c                                         :+:      :+:    :+:   */
+/*   ft_strcspn.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gmalyana <gmalyana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/02 20:16:18 by gmalyana          #+#    #+#             */
-/*   Updated: 2024/11/03 00:21:29 by gmalyana         ###   ########.fr       */
+/*   Created: 2024/10/13 20:59:53 by gmalyana          #+#    #+#             */
+/*   Updated: 2024/10/13 21:16:01 by gmalyana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../minishell.h"
+#include "libft.h"
 
-int	ft_unset(t_shell *shell, char **av)
+size_t	ft_strcspn(const char *s1, const char *s2)
 {
-	int	status;
+	size_t	i;
+	size_t	j;
 
-	status = SUCCESS;
-	while (*av)
+	i = 0;
+	while (s1[i])
 	{
-		if (is_key_valid(*av))
-			unset_env(&shell->env, *av);
-		else
+		j = 0;
+		while (s2[j])
 		{
-			status = FAILURE;
-			invalid_identifier("unset", *av);
+			if (s1[i] == s2[j])
+				return (i);
+			j++;
 		}
-		av++;
+		i++;
 	}
-	return (status);
+	return (i);
 }

@@ -6,29 +6,41 @@
 /*   By: gmalyana <gmalyana@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 11:37:40 by gmalyana          #+#    #+#             */
-/*   Updated: 2024/10/08 14:20:06 by gmalyana         ###   ########.fr       */
+/*   Updated: 2024/11/14 05:22:50 by gmalyana         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# ifndef MINISHELL_H
+#ifndef MINISHELL_H
 # define MINISHELL_H
 
 # include "libft/libft.h"
-# include <string.h>
 # include <stdio.h>
 # include <errno.h>
+# include <limits.h>
+# include <sys/wait.h>
+# include <termios.h>
+# include <fcntl.h>
+# include <sys/stat.h>
 # include <stdbool.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 
 # define PROMPT "\033[0;35m➜\033[0m "
+# define AMBG "minishell: ambiguous redirect\n"
+# define CDERR "cd: error retrieving current directory: getcwd: cannot access \
+parent directories"
 
-# define TRUE "\033[0;32mtrue\033[0m"
-# define FALSE "\033[0;31mfalse\033[0m"
-
-# define ERROR 258 //!
+# define ERROR 258
 # define SUCCESS 0
 # define FAILURE 1
+
+# define WRITE_FD 0
+# define READ_FD 1
+
+# define IN_FD 0
+# define OUT_FD 1
+
+int	g_received_signals;
 
 typedef enum e_type
 {
@@ -59,7 +71,7 @@ typedef struct s_token
 
 typedef struct s_redir
 {
-	int			fd;
+	int			heredoc_fd;
 	char		*filename;
 	t_type		type;
 }	t_redir;
@@ -68,44 +80,83 @@ typedef struct s_cmd
 {
 	int			argc;
 	char		**argv;
+	char		**envp;
+	int			in;
+	int			out;
+	bool		is_builtin;
 	t_list		*redirs;
 }	t_cmd;
-
-/*
-typedef struct s_list
-{
-	void			*content;
-	struct s_list	*next;
-	struct s_list	*prev;
-}	t_list;
-*/
 
 typedef struct s_shell
 {
 	t_list		*tokens;
 	t_list		*cmds;
 	t_list		*env;
+	t_list		*hidden_env;
 	int			exit_status;
+	int			received_signals;
 }	t_shell;
 
-
-t_type		get_type(char *word);
-int			get_len(char *word, t_type type);
+// Builtins
+void		ft_echo(char **av);
+int			ft_cd(t_shell *sh, char **av);
+int			ft_pwd(t_shell *sh);
+void		ft_env(t_shell *sh);
+int			ft_exit(t_shell *sh, int ac, char **av);
+bool		is_key_valid(char *key);
+void		invalid_identifier(char *func, char *identifier);
+int			ft_export(t_shell *sh, char **av);
+int			ft_unset(t_shell *shell, char **av);
 
 // Parsing
 void		free_token(void *content);
 int			parse(t_shell *sh);
+bool		is_expandable(char *line);
+int			expand(t_shell *sh, t_token *token);
+int			create_token(t_shell *sh, char *line, int *i);
 
 // Signals
+void		heredoc_handler(int sig);
+void		check_signal(t_shell *sh);
+void		set_signals_handlers(void);
 void		sigint_handler(int sig);
-int 		init_cmd(t_shell *sh);
+
+// Commmands
+char		**list_to_array(t_list *list);
+void		free_cmd(void *content);
+int			init_cmd(t_shell *sh);
+
 // Environment
 void		free_env(void *content);
-t_env		*new_env(char *env);
+int			set_env(t_list **list, char *key, char *value);
+int			create_env(t_list **list, char *key, char *value);
+void		unset_env(t_list **list, char *key);
+int			append_env(t_list **list, char *key, char *value);
 char		*get_env(t_list *list, char *key);
-int 		init_env(t_list **list, char **envp);
+bool		is_env_exist(t_list *list, char *key);
+int			init_hidden_env(t_shell *sh);
 
-void		print_tokens(t_list *tokens);
-void		display_cmds(t_list *cmd);
+// Expansion
+char		*expand_string(t_shell *sh, char *line);
+
+// Heredoc
+int			set_heredoc(t_shell *sh, t_redir *redir, t_token *token);
+
+// Utils
+char		*ft_strjoin_free(char *s1, char *s2, int to_free);
+bool		isoperator(t_token *token);
 bool		isredir(t_token *token);
-# endif
+void		free_array(char **array);
+void		free_redir(void *content);
+void		my_exit(t_shell *sh, int status);
+
+// Execution
+bool		is_dir(t_cmd *cmd);
+bool		is_builtin(char *cmd);
+int			join_path(t_shell *sh);
+int			open_redirs(t_cmd *cmd);
+int			run_builtin(t_shell *sh, t_cmd *cmd);
+void		run_bin(t_cmd *cmd);
+void		exec(t_shell *sh);
+
+#endif
